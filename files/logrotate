@@ -1,0 +1,8 @@
+/var/www/*/logs/*.log {
+    daily
+    rotate 14
+    copytruncate
+    compress
+    notifempty
+    missingok
+}

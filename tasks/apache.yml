@@ -1,0 +1,57 @@
+- name: Install apache2
+  apt: pkg=apache2 state=present
+
+- name: Enable apache modules
+  apache2_module: name={{ item }} state=present
+  with_items: "{{ apache_enable_modules }}"
+  notify: restart apache2
+
+- name: Copy site files
+  copy: src=../../../files/apache2/{{ inventory_hostname }}/sites/ dest=/etc/apache2/sites-available/
+  notify: reload apache2
+
+- name: Copy includes
+  copy: src=includes/ dest=/etc/apache2/includes/
+  notify: reload apache2
+
+- name: Copy custom includes
+  copy: src={{ apache2_include_path }} dest=/etc/apache2/includes/
+  when: apache2_include_path is defined
+  notify: reload apache2
+
+- name: Copy macros
+  copy: src=macros/ dest=/etc/apache2/macros/
+  notify: reload apache2
+
+- name: Copy custom macros
+  copy: src={{ apache2_macros_path }} dest=/etc/apache2/macros/
+  when: apache2_macros_path is defined
+  notify: reload apache2
+
+- name: Copy config files
+  copy: src=conf/ dest=/etc/apache2/conf-available/
+  notify: reload apache2
+
+- name: Activate configuration
+  command:
+    a2enconf {{ item }}.conf
+    creates=/etc/apache2/conf-enabled/{{ item }}.conf
+  with_items:
+    - protect-git
+    - enable-http2
+    - include-macros
+  notify: reload apache2
+
+- name: Install vhost logrotation
+  copy: src=logrotate dest=/etc/logrotate.d/apache-vhost-logs
+
+- name: Install catch-all http vhost
+  copy: src=000-default.conf dest=/etc/apache2/sites-available/000-default.conf
+  notify: reload apache2
+
+- name: Enable catch-all http vhost
+  file:
+    src: "/etc/apache2/sites-available/000-default.conf"
+    dest: "/etc/apache2/sites-enabled/000-default.conf"
+    state: link
+  notify: reload apache2

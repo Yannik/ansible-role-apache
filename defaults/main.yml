@@ -1,0 +1,8 @@
+apache_enable_modules: 
+  - rewrite
+  - ssl
+  - headers
+  - proxy_fcgi # used for php-fpm
+  - macro
+  - http2
+  - proxy_http # to proxy to a python http server or similar
