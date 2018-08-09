@@ -45,6 +45,9 @@
 - name: Install vhost logrotation
   copy: src=logrotate dest=/etc/logrotate.d/apache-vhost-logs
 
+- name: Create /var/www/default for catch-all host
+  file: path=/var/www/default state=directory
+
 - name: Install catch-all http vhost
   copy: src=000-default.conf dest=/etc/apache2/sites-available/000-default.conf
   notify: reload apache2
