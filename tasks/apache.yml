@@ -6,10 +6,6 @@
   file: path=/var/www/html state=absent
   when: apache2_installation is changed
 
-- name: Remove default /var/www/default directory after installation
-  file: path=/var/www/default state=absent
-  when: apache2_installation is changed
-
 - name: Enable apache modules
   apache2_module: name={{ item }} state=present
   with_items: "{{ apache_enable_modules }}"
