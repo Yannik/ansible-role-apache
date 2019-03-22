@@ -1,3 +1,8 @@
+- name: Prevent libapache2-mod-php from being installed
+  copy:
+    src: libapache2-mod-php.pref
+    dest: /etc/apt/preferences.d/
+
 - name: Install apache2
   apt: pkg=apache2 state=present
   register: apache2_installation
