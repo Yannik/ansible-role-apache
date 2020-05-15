@@ -6,3 +6,5 @@ apache_enable_modules:
   - macro
   - http2
   - proxy_http # to proxy to a python http server or similar
+
+apache_sites_path: ../../../files/apache2/{{ inventory_hostname }}/sites/   

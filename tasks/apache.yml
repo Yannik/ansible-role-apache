@@ -17,7 +17,7 @@
   notify: restart apache2
 
 - name: Copy site files
-  copy: src=../../../files/apache2/{{ inventory_hostname }}/sites/ dest=/etc/apache2/sites-available/
+  copy: src={{ apache_sites_path }} dest=/etc/apache2/sites-available/
   notify: reload apache2
 
 - name: Copy includes
