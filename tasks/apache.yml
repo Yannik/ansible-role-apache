@@ -11,6 +11,30 @@
   file: path=/var/www/html state=absent
   when: apache2_installation is changed
 
+- name: Ensure users exist
+  user:
+    name: "{{ item.user|default(apache_user_prefix + item.name) }}"
+  loop: "{{ apache_web_directories }}"
+
+- name: Add groups to apache user
+  user:
+    name: www-data
+    groups: "{{ item.group|default(item.user|default(apache_user_prefix + item.name)) }}"
+    append: yes
+  loop: "{{ apache_web_directories }}"
+  notify: reload apache2
+
+- name: Create web-directories
+  file:
+    path: "/var/www/{{ item.0.name }}/{{ item.1 }}"
+    state: directory
+    owner: "{{ item.0.user | default(apache_user_prefix + item.0.name) }}"
+    group: "{{ item.0.group | default(item.0.user|default(apache_user_prefix + item.0.name)) }}"
+    mode: 0710
+  with_nested:
+    - "{{ apache_web_directories }}"
+    - ['', 'htdocs','logs']
+
 - name: Copy site files
   template:
     src: "{{ item }}"
@@ -72,26 +96,3 @@
     state: link
   notify: reload apache2
 
-- name: Ensure users exist
-  user:
-    name: "{{ item.user|default(apache_user_prefix + item.name) }}"
-  loop: "{{ apache_web_directories }}"
-
-- name: Add groups to apache user
-  user:
-    name: www-data
-    groups: "{{ item.group|default(item.user|default(apache_user_prefix + item.name)) }}"
-    append: yes
-  loop: "{{ apache_web_directories }}"
-  notify: reload apache2
-
-- name: Create web-directories
-  file:
-    path: "/var/www/{{ item.0.name }}/{{ item.1 }}"
-    state: directory
-    owner: "{{ item.0.user | default(apache_user_prefix + item.0.name) }}"
-    group: "{{ item.0.group | default(item.0.user|default(apache_user_prefix + item.0.name)) }}"
-    mode: 0710
-  with_nested:
-    - "{{ apache_web_directories }}"
-    - ['', 'htdocs','logs']
