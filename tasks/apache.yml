@@ -64,6 +64,11 @@
   copy: src=conf/ dest=/etc/apache2/conf-available/
   notify: reload apache2
 
+- name: Copy custom mods files
+  copy: src={{ apache2_mods_path }} dest=/etc/apache2/mods-available/
+  when: apache2_mods_path is defined
+  notify: reload apache2
+
 - name: Enable apache modules
   apache2_module: name={{ item }} state=present
   with_items: "{{ apache_enable_modules }}"
