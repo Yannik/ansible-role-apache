@@ -7,6 +7,6 @@ apache_enable_modules:
   - http2
   - proxy_http # to proxy to a python http server or similar
 
-apache_sites_path: "{{ inventory_dir }}/files/apache2/{{ inventory_hostname }}/sites"
+apache_sites_path: "{{ inventory_dir }}/files/{{ inventory_hostname }}/apache2/sites"
 apache_user_prefix: "web-"
 apache_web_directories: []
