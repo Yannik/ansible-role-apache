@@ -30,7 +30,7 @@
     state: directory
     owner: "{{ item.0.user | default(apache_user_prefix + item.0.name) }}"
     group: "{{ item.0.group | default(item.0.user|default(apache_user_prefix + item.0.name)) }}"
-    mode: 0710
+    mode: "{{ item.0.mode | default('0710') }}"
   with_nested:
     - "{{ apache_web_directories }}"
     - ['', 'htdocs','logs']
