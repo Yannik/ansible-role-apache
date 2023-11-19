@@ -95,22 +95,23 @@
   copy: src=logrotate dest=/etc/logrotate.d/apache-vhost-logs
 
 - name: Create /var/www/default for catch-all host
-  file: path=/var/www/default state=directory
-  when: apache_catchall_vhost
+  file:
+    path: /var/www/default
+    state: "{{ apache_catchall_vhost | ternary('directory', 'absent') }}"
 
 - name: Install catch-all http vhost
   copy:
     src: 000-default.conf
     dest: /etc/apache2/sites-available/000-default.conf
     mode: 0600
-  when: apache_catchall_vhost
+    state: "{{ apache_catchall_vhost | ternary('present', 'absent') }}"
   notify: reload apache2
 
 - name: Enable catch-all http vhost
   file:
     src: "/etc/apache2/sites-available/000-default.conf"
     dest: "/etc/apache2/sites-enabled/000-default.conf"
-    state: link
+    state: "{{ apache_catchall_vhost | ternary('link', 'absent') }}"
   notify: reload apache2
 
 - name: Enable sites

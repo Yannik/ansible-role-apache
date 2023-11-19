@@ -8,6 +8,7 @@ apache_enable_modules:
   - proxy_http # to proxy to a python http server or similar
   - expires
 
+apache_catchall_vhost: true
 apache_enable_sites: []
 apache_sites_path: "{{ inventory_dir }}/files/{{ inventory_hostname }}/apache2/sites"
 apache_user_prefix: "web-"
