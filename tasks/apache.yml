@@ -39,6 +39,7 @@
   template:
     src: "{{ item }}"
     dest: /etc/apache2/sites-available/
+    mode: 0600
   with_fileglob: "{{ apache_sites_path }}/*"
   notify: reload apache2
 
@@ -61,11 +62,17 @@
   notify: reload apache2
 
 - name: Copy config files
-  copy: src=conf/ dest=/etc/apache2/conf-available/
+  copy:
+    src: conf/
+    dest: /etc/apache2/conf-available/
+    mode: 0600
   notify: reload apache2
 
 - name: Copy custom mods files
-  copy: src={{ apache2_mods_path }} dest=/etc/apache2/mods-available/
+  copy:
+    src: "{{ apache2_mods_path }}"
+    dest: /etc/apache2/mods-available/
+    mode: 0600
   when: apache2_mods_path is defined
   notify: reload apache2
 
@@ -89,9 +96,14 @@
 
 - name: Create /var/www/default for catch-all host
   file: path=/var/www/default state=directory
+  when: apache_catchall_vhost
 
 - name: Install catch-all http vhost
-  copy: src=000-default.conf dest=/etc/apache2/sites-available/000-default.conf
+  copy:
+    src: 000-default.conf
+    dest: /etc/apache2/sites-available/000-default.conf
+    mode: 0600
+  when: apache_catchall_vhost
   notify: reload apache2
 
 - name: Enable catch-all http vhost
