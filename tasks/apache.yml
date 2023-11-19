@@ -14,6 +14,7 @@
 - name: Ensure users exist
   user:
     name: "{{ item.user|default(apache_user_prefix + item.name) }}"
+    shell: /bin/bash
   loop: "{{ apache_web_directories }}"
 
 - name: Add groups to apache user
